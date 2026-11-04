@@ -211,6 +211,25 @@
     else show('s-invitacion');
   });
 
+  // Al darle play, el video pasa a pantalla completa (y sale solo al terminar).
+  const video = $('video');
+  video.addEventListener('play', () => {
+    if (document.fullscreenElement || document.webkitFullscreenElement) return;
+    try {
+      if (video.requestFullscreen) {
+        video.requestFullscreen().then(() => {
+          if (screen.orientation && screen.orientation.lock) screen.orientation.lock('landscape').catch(() => {});
+        }).catch(() => {});
+      } else if (video.webkitEnterFullscreen) {
+        video.webkitEnterFullscreen(); // iPhone
+      }
+    } catch {}
+  });
+  video.addEventListener('ended', () => {
+    if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+    else if (video.webkitExitFullscreen) try { video.webkitExitFullscreen(); } catch {}
+  });
+
   async function start() {
     show('s-video');
     // El botón "Seguir" aparece a los 45 s, para dar tiempo a ver el video.
