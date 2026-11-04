@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>GUILLEGIU · Temporada 28</title>
+  <meta name="description" content="Estás invitado. Temporada 28, Capítulo I. Esta perfo es personal.">
+  <meta name="theme-color" content="#0b0b0d">
+  <meta property="og:title" content="GUILLEGIU · Temporada 28">
+  <meta property="og:description" content="Capítulo I. Esta perfo es personal. Entrá, mirá el video y confirmá.">
+  <meta property="og:image" content="/poster.jpg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <main class="wrap">
+    <header class="brand">
+      <div class="kicker"><span id="temporada"></span><span class="dot"></span><span id="capitulo"></span></div>
+      <div class="logo" id="logo">GUILLEGIU</div>
+      <div class="tagline" id="lema"></div>
+    </header>
+
+    <div class="steps" id="steps"><span></span><span></span><span></span><span></span></div>
+
+    <!-- 1. Video -->
+    <section class="screen" id="s-video">
+      <div class="video-box">
+        <video id="video" src="/video.mp4" controls playsinline preload="metadata"></video>
+      </div>
+      <p class="muted small" style="text-align:center">Dale play y subí el volumen.</p>
+      <button class="btn" type="button" id="b-video">Seguir</button>
+    </section>
+
+    <!-- 2. Nombre -->
+    <section class="screen" id="s-nombre">
+      <div class="card">
+        <h2>Estás invitado</h2>
+        <p class="muted">Antes de ver la invitación, decime quién sos.</p>
+        <form id="f-nombre" autocomplete="on">
+          <label class="field" for="nombre">Tu nombre</label>
+          <input type="text" id="nombre" name="name" maxlength="60" placeholder="Nombre y apellido" autocomplete="name" required>
+          <p class="error" id="e-nombre"></p>
+          <button class="btn" type="submit" id="b-nombre">Entrar</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- 3. Invitacion -->
+    <section class="screen" id="s-invitacion">
+      <div class="card">
+        <h2 id="saludo">Hola</h2>
+        <p id="fecha" class="tagline hidden" style="margin-bottom:10px"></p>
+        <p id="presentacion"></p>
+      </div>
+
+      <div class="section-title">
+        <h2 id="previa-titulo"></h2>
+        <span class="time" id="previa-hora"></span>
+        <span class="muted" id="previa-detalle"></span>
+      </div>
+
+      <div class="maps">
+      <div class="card map-card">
+        <h3 id="previa-direccion"></h3>
+        <a class="link" id="mapa-link" target="_blank" rel="noopener" style="margin-top:0">Abrir en Google Maps</a>
+        <div class="map-foot">
+          <p class="map-label ok"><span class="mark">&#10003;</span> Es acá</p>
+          <div class="map ok"><iframe id="mapa" title="Mapa de la previa" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe></div>
+        </div>
+      </div>
+
+      <div class="card wrong map-card">
+        <h3 id="noes-direccion"></h3>
+        <p class="muted small" style="margin:0">Ojo, no te confundas con el 59 bis.</p>
+        <div class="map-foot">
+        <p class="map-label bad"><span class="mark">&#10005;</span> No es acá</p>
+        <div class="map bad"><iframe id="mapa-noes" title="Dirección que no es" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe></div>
+        </div>
+      </div>
+      </div>
+
+      <div class="card">
+        <h3 style="margin-bottom:12px">El plan de la noche</h3>
+        <ul class="timeline" id="plan"></ul>
+      </div>
+
+      <button class="btn" type="button" data-go="s-rsvp">Confirmar asistencia</button>
+      <button class="btn ghost" type="button" data-go="s-video">Ver el video de nuevo</button>
+    </section>
+
+    <!-- 4. Confirmacion -->
+    <section class="screen" id="s-rsvp">
+      <form id="f-rsvp">
+        <div class="duo">
+        <div class="card">
+          <div class="question">
+            <p class="q">¿A qué venís?</p>
+            <div class="chips">
+              <label class="chip"><input type="radio" name="asistencia" value="previa">Solo previa</label>
+              <label class="chip"><input type="radio" name="asistencia" value="boliche">Solo boliche</label>
+              <label class="chip wide"><input type="radio" name="asistencia" value="ambas">A las dos</label>
+              <label class="chip wide"><input type="radio" name="asistencia" value="no">No puedo ir</label>
+            </div>
+          </div>
+
+          <div class="question" id="q-bebida">
+            <p class="q">¿Qué vas a tomar?</p>
+            <div class="chips">
+              <label class="chip"><input type="radio" name="bebida" value="cerveza">Cerveza</label>
+              <label class="chip"><input type="radio" name="bebida" value="gin">Gin</label>
+              <label class="chip"><input type="radio" name="bebida" value="fernet">Fernet</label>
+              <label class="chip"><input type="radio" name="bebida" value="vodka">Vodka</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="card surprise">
+          <h3>Habrá sorpresas</h3>
+          <p class="muted small">Subí una foto de tu mascota y decime cómo se llama. No preguntes por qué.</p>
+          <label class="field" for="pet-name">Nombre de tu mascota</label>
+          <input type="text" id="pet-name" maxlength="40" placeholder="Ej: Firulais">
+          <label class="pet-pick" for="pet-photo">
+            <span class="pet-thumb" id="pet-thumb">+</span>
+            <span>
+              <b id="pet-photo-label">Elegir foto</b><br>
+              <span class="muted small">Desde la galería o sacala en el momento</span>
+            </span>
+            <input type="file" id="pet-photo" accept="image/*">
+          </label>
+          <label class="check"><input type="checkbox" id="no-pet">No tengo mascota</label>
+        </div>
+        </div>
+
+        <p class="error" id="e-rsvp"></p>
+        <button class="btn" type="submit" id="b-rsvp">Enviar</button>
+      </form>
+    </section>
+
+    <!-- 5. Gracias -->
+    <section class="screen" id="s-gracias">
+      <div class="card">
+        <h2 id="gracias-titulo">Listo</h2>
+        <p class="muted" id="gracias-texto"></p>
+        <ul class="summary" id="resumen"></ul>
+      </div>
+      <button class="btn" type="button" data-go="s-invitacion">Ver la invitación</button>
+      <button class="btn ghost" type="button" data-go="s-rsvp">Cambiar mi respuesta</button>
+    </section>
+
+    <footer id="footer"></footer>
+  </main>
+
+  <script src="/config.js"></script>
+  <script src="/app.js"></script>
+</body>
+</html>

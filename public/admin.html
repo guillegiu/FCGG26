@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Admin · GUILLEGIU</title>
+  <meta name="theme-color" content="#0b0b0d">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+  <style>
+    .wrap.admin { max-width: 1100px; }
+    .top { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+    .top .logo { font-size: 40px; margin: 0; }
+    .top .actions { display: flex; gap: 8px; }
+    .top .btn { width: auto; min-height: 42px; padding: 8px 14px; font-size: 14px; }
+    .top .btn + .btn { margin-top: 0; }
+    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-bottom: 14px; }
+    .stat { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 14px; }
+    .stat b { display: block; font-family: var(--font-title); font-weight: 400; font-size: 34px; line-height: 1; color: var(--text); }
+    .stat span { color: var(--muted); font-size: 13px; }
+    .stat.red b { color: var(--red-2); }
+    .tabs { display: flex; gap: 6px; margin: 18px 0 12px; flex-wrap: wrap; }
+    .tabs button { font: inherit; font-size: 14px; font-weight: 600; color: var(--muted); background: transparent; border: 1px solid var(--line); border-radius: 999px; padding: 8px 14px; cursor: pointer; }
+    .tabs button.on { color: #fff; border-color: var(--red); background: rgba(225, 34, 43, 0.16); }
+    .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 760px; }
+    th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+    th { color: var(--muted); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; background: var(--bg-2); position: sticky; top: 0; }
+    tr:last-child td { border-bottom: 0; }
+    td .thumb { width: 40px; height: 40px; border-radius: 8px; object-fit: cover; vertical-align: middle; margin-right: 8px; cursor: zoom-in; border: 1px solid var(--line); }
+    .tag { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 12px; font-weight: 700; border: 1px solid var(--line); }
+    .tag.previa { color: #ffd166; border-color: #6b5a24; }
+    .tag.boliche { color: #7fd1ff; border-color: #24506b; }
+    .tag.ambas { color: #8ef0a7; border-color: #256b39; }
+    .tag.no { color: var(--muted); }
+    .tag.pend { color: #ff9aa0; border-color: #6b2428; }
+    .del { background: none; border: 0; color: var(--muted); cursor: pointer; font: inherit; font-size: 13px; text-decoration: underline; }
+    .del:hover { color: var(--red-2); }
+    .gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; }
+    .pet { background: var(--card); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+    .pet img { display: block; width: 100%; aspect-ratio: 1; object-fit: cover; cursor: zoom-in; background: #111; }
+    .pet .noimg { aspect-ratio: 1; display: grid; place-items: center; color: var(--muted); background: #111; font-size: 13px; }
+    .pet div.t { padding: 10px; }
+    .pet b { display: block; }
+    .pet span { color: var(--muted); font-size: 13px; }
+    .bars { display: grid; gap: 8px; }
+    .bar { display: grid; grid-template-columns: 80px 1fr 36px; gap: 10px; align-items: center; font-size: 14px; }
+    .bar i { display: block; height: 10px; border-radius: 6px; background: var(--red); min-width: 2px; }
+    .bar .track { background: #101014; border-radius: 6px; }
+    .zoom { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.88); display: grid; place-items: center; padding: 16px; z-index: 10; cursor: zoom-out; }
+    .zoom img { max-width: 100%; max-height: 90vh; border-radius: 12px; }
+    .login { max-width: 380px; margin: 10vh auto 0; }
+    #geo-map { height: 520px; border-radius: 12px; border: 1px solid var(--line); }
+    .leaflet-popup-content { color: #111; }
+    .empty { color: var(--muted); padding: 24px; text-align: center; }
+  </style>
+</head>
+<body>
+  <main class="wrap admin">
+    <section id="login" class="login hidden">
+      <div class="brand"><div class="logo" style="font-size:56px">GUILLEGIU</div><div class="tagline">Admin</div></div>
+      <form class="card" id="f-login">
+        <label class="field" for="pass">Clave de admin</label>
+        <input type="password" id="pass" autocomplete="current-password" required>
+        <p class="error" id="e-login"></p>
+        <button class="btn" type="submit">Entrar</button>
+      </form>
+    </section>
+
+    <section id="panel" class="hidden">
+      <div class="top">
+        <div class="logo">GUILLEGIU</div>
+        <div class="actions">
+          <button class="btn ghost" id="b-refresh" type="button">Actualizar</button>
+          <button class="btn ghost" id="b-csv" type="button">Descargar CSV</button>
+          <button class="btn ghost" id="b-out" type="button">Salir</button>
+        </div>
+      </div>
+
+      <div class="stats" id="stats"></div>
+
+      <div class="card">
+        <h3 style="margin-bottom:12px">Bebidas (de los que vienen)</h3>
+        <div class="bars" id="bars"></div>
+      </div>
+
+      <div class="tabs" id="tabs">
+        <button type="button" data-tab="todos" class="on">Todos</button>
+        <button type="button" data-tab="respondieron">Respondieron</button>
+        <button type="button" data-tab="pendientes">Entraron sin responder</button>
+        <button type="button" data-tab="mascotas">Mascotas</button>
+        <button type="button" data-tab="mapa">Mapa</button>
+      </div>
+
+      <div id="lista"></div>
+      <p class="muted small" id="updated" style="margin-top:12px"></p>
+    </section>
+  </main>
+
+  <script src="/admin.js"></script>
+</body>
+</html>
