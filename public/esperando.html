@@ -43,11 +43,15 @@
     .luces span:nth-child(4) { left: 78%; animation-delay: -3s; background: linear-gradient(180deg, rgba(63, 209, 165, 0.3), transparent 80%); }
     @keyframes reflector { from { transform: rotate(-18deg); } to { transform: rotate(18deg); } }
 
-    .bailarines {
-      position: relative; display: flex; flex-wrap: wrap-reverse; justify-content: center; align-items: flex-end;
-      gap: 4px 14px; padding: 10px 16px 0; z-index: 2;
+    .bailarines { position: relative; z-index: 2; margin: 0 2%; }
+    /* Cada mascota camina a los saltos de un lado a otro (left lo mueve el JS). */
+    .bailarin {
+      position: absolute; bottom: 0; display: flex; flex-direction: column; align-items: center;
+      transform: translateX(-50%); transition-property: left; transition-timing-function: ease-in-out;
     }
-    .bailarin { display: flex; flex-direction: column; align-items: center; }
+    .bailarin .flip { transition: transform 0.25s; }
+    .bailarin.izq .flip { transform: scaleX(-1); }
+    .bailarin.camina svg { animation-name: baile-salto !important; animation-duration: 0.55s !important; }
     .bailarin svg {
       display: block; animation-duration: 0.9s; animation-iteration-count: infinite;
       animation-timing-function: ease-in-out; animation-delay: inherit; transform-origin: 50% 100%;
@@ -67,9 +71,8 @@
       50% { transform: scaleX(-1); } 75% { transform: scaleX(1) translateY(-8%); }
     }
     @keyframes baile-lado { 0%, 100% { transform: translateX(-10%) rotate(-6deg); } 50% { transform: translateX(10%) rotate(6deg) translateY(-5%); } }
-    .nombre { font-weight: 700; font-size: 14px; text-align: center; text-shadow: 0 2px 6px #000; }
-    .nombre span { display: block; color: #9a9aa5; font-weight: 400; font-size: 12px; }
-    .vacio { color: #9a9aa5; padding: 30px; }
+    .nombre { white-space: nowrap; font-weight: 700; font-size: 14px; text-align: center; text-shadow: 0 2px 6px #000; }
+    .vacio { color: #9a9aa5; padding: 30px; text-align: center; }
 
     .tarima {
       position: relative; height: 34px; margin: -6px -4px 0; border-radius: 10px 10px 4px 4px;
@@ -125,6 +128,23 @@
       tick();
       setInterval(tick, 1000);
 
+      // Cada tanto elige un punto al azar del escenario y va saltando hasta ahí;
+      // al llegar baila un rato en el lugar.
+      let timers = [];
+      function pasear(d) {
+        const quieto = 1500 + Math.random() * 3500;
+        timers.push(setTimeout(() => {
+          const desde = parseFloat(d.style.left);
+          const hasta = 5 + Math.random() * 90;
+          const dur = Math.max(1, Math.abs(hasta - desde) / 12);
+          d.classList.toggle('izq', hasta < desde);
+          d.classList.add('camina');
+          d.style.transitionDuration = dur + 's';
+          d.style.left = hasta + '%';
+          timers.push(setTimeout(() => { d.classList.remove('camina'); pasear(d); }, dur * 1000));
+        }, quieto));
+      }
+
       let ultimo = '';
       async function cargar() {
         try {
@@ -134,20 +154,24 @@
           ultimo = firma;
           const box = document.getElementById('bailarines');
           box.textContent = '';
+          timers.forEach(clearTimeout);
+          timers = [];
           const tam = pets.length > 24 ? 64 : pets.length > 12 ? 82 : pets.length > 6 ? 104 : 128;
+          box.style.height = tam + 26 + 'px';
           pets.forEach((p, i) => {
             const d = document.createElement('div');
             d.className = 'bailarin ' + BAILES[i % BAILES.length];
             d.style.animationDelay = `${-((i * 0.37) % 1.2)}s`;
-            d.innerHTML = Mascota.svg(p.design, tam);
+            d.style.left = (8 + Math.random() * 84) + '%';
+            const flip = document.createElement('div');
+            flip.className = 'flip';
+            flip.innerHTML = Mascota.svg(p.design, tam);
             const n = document.createElement('div');
             n.className = 'nombre';
             n.textContent = p.nombre;
-            const s = document.createElement('span');
-            s.textContent = 'de ' + p.dueno;
-            n.append(s);
-            d.append(n);
+            d.append(flip, n);
             box.append(d);
+            pasear(d);
           });
           if (!pets.length) {
             const v = document.createElement('div');

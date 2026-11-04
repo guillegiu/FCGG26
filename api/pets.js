@@ -1,4 +1,4 @@
-// Publico: las mascotas diseñadas (solo nombre de la mascota, primer nombre del dueño y el diseño).
+// Publico: las mascotas diseñadas (solo nombre de la mascota y el diseño).
 import { getJSON, listPaths } from '../lib/store.js';
 import { send } from '../lib/http.js';
 
@@ -12,7 +12,6 @@ export default async function handler(req, res) {
       .sort((a, b) => String(a.respondedAt).localeCompare(String(b.respondedAt)))
       .map((g) => ({
         nombre: g.pet.name || '',
-        dueno: String(g.name || '').split(' ')[0],
         design: g.pet.design,
       }));
     return send(res, 200, { pets });
