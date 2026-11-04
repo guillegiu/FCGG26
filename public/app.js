@@ -28,6 +28,7 @@
   $('lema').textContent = E.lema;
   $('footer').textContent = `${E.nombre} · ${E.temporada}`;
   $('presentacion').textContent = E.presentacion;
+  $('bebida-aviso').textContent = E.bebida || '';
   if (E.fecha) { $('fecha').textContent = E.fecha; $('fecha').classList.remove('hidden'); }
 
   $('previa-hora').textContent = E.previa.hora;

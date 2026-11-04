@@ -9,7 +9,9 @@ window.EVENTO = {
   fecha: 'Sábado 7 de noviembre',
 
   presentacion:
-    'Cumplo 28 y lo festejamos como corresponde. Arrancamos con una previa y después nos vamos a cachenguear.',
+    'Estás invitado a mi cumple. Cumplo 28 y no me lo imagino sin vos, así que lo festejamos como corresponde: arrancamos con una previa y después nos vamos a cachenguear.',
+
+  bebida: 'La bebida la pongo yo. Vos traé solo ganas de perfo y de pasarla bien.',
 
   previa: {
     titulo: 'Previa',
