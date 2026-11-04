@@ -70,6 +70,26 @@
   $('b-refresh').addEventListener('click', () => load().catch((e) => alert(e.message)));
   $('b-out').addEventListener('click', () => { store.set(''); key = ''; showLogin(); });
   $('b-csv').addEventListener('click', downloadCsv);
+  // Copia las mascotas diseñadas como JSON (mismo formato que juegos-michi).
+  $('b-json').addEventListener('click', async () => {
+    const data = guests
+      .filter((g) => g.pet && g.pet.design)
+      .map((g) => ({ dueno: g.name, nombre: g.pet.name || '', ...g.pet.design }));
+    const text = JSON.stringify(data, null, 2);
+    const b = $('b-json');
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch {
+      const t = document.createElement('textarea');
+      t.value = text;
+      document.body.append(t);
+      t.select();
+      document.execCommand('copy');
+      t.remove();
+    }
+    b.textContent = `Copiadas ${data.length} mascotas`;
+    setTimeout(() => { b.textContent = 'Copiar mascotas (JSON)'; }, 2000);
+  });
   $('tabs').addEventListener('click', (e) => {
     const b = e.target.closest('[data-tab]');
     if (!b) return;
