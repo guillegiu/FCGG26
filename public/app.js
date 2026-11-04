@@ -117,7 +117,17 @@
     $('q-bebida').classList.toggle('hidden', a === 'no');
   }
 
-  const petEditor = Mascota.editor($('pet-editor'), null, (g) => { petDesign = g; });
+  // El "Ej:" del nombre cambia segun la especie, eligiendo uno al azar.
+  const EJEMPLOS = { gato: ['Musso', 'Toto'], perro: ['Yago', 'Roberta'] };
+  let especieEj = null;
+  const petEditor = Mascota.editor($('pet-editor'), null, (g) => {
+    petDesign = g;
+    if (g.especie !== especieEj) {
+      especieEj = g.especie;
+      const ops = EJEMPLOS[g.especie] || EJEMPLOS.gato;
+      $('pet-name').placeholder = 'Ej: ' + ops[Math.floor(Math.random() * ops.length)];
+    }
+  });
 
   form.addEventListener('change', (e) => {
     if (e.target.name === 'asistencia') updateBebida();
