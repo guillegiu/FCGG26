@@ -248,9 +248,9 @@
 
   async function start() {
     show('s-video');
-    // El botón "Seguir" aparece a los 30 s, para dar tiempo a ver el video.
+    // El botón "Seguir" aparece a los 45 s, para dar tiempo a ver el video.
     $('b-video').classList.add('hidden');
-    setTimeout(() => $('b-video').classList.remove('hidden'), 30000);
+    setTimeout(() => $('b-video').classList.remove('hidden'), 45000);
     const savedName = local.get('cumple.name');
     if (!savedName) return;
     $('nombre').value = savedName;
