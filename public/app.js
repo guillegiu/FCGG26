@@ -214,6 +214,8 @@
   // Al darle play, el video pasa a pantalla completa (y sale solo al terminar).
   const video = $('video');
   video.addEventListener('play', () => {
+    video.muted = false;
+    video.volume = 1;
     if (document.fullscreenElement || document.webkitFullscreenElement) return;
     try {
       if (video.requestFullscreen) {

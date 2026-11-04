@@ -197,6 +197,15 @@ input[type='text']:focus, input[type='password']:focus {
 
 .video-box video { display: block; width: 100%; height: auto; aspect-ratio: 1280 / 536; background: #000; }
 
+.vol-hint {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  margin: 14px auto; padding: 10px 16px; width: fit-content;
+  border: 1px solid var(--red); border-radius: 999px;
+  background: rgba(225, 34, 43, 0.12); color: #fff; font-weight: 600;
+  animation: vol-pulse 1.6s ease-in-out infinite;
+}
+@keyframes vol-pulse { 50% { box-shadow: 0 0 0 6px rgba(225, 34, 43, 0.18); } }
+
 .info-row {
   display: grid;
   grid-template-columns: 76px 1fr;
