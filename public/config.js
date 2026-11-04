@@ -11,7 +11,8 @@ window.EVENTO = {
   presentacion:
     'Estás invitado a mi cumple. Cumplo 28 y no me lo imagino sin vos, así que lo festejamos como corresponde: arrancamos con una previa y después nos vamos a cachenguear. Te espero después de comer.',
 
-  bebida: 'La bebida la pongo yo. Vos traé solo ganas de perfo y de pasarla bien.',
+  // Se muestra al final, cuando ya respondió y viene.
+  bebida: 'La bebida la invita la casa. Vos traé solo ganas de perfo y de pasarla bien.',
 
   previa: {
     titulo: 'Previa',

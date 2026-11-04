@@ -28,7 +28,6 @@
   $('lema').textContent = E.lema;
   $('footer').textContent = `${E.nombre} · ${E.temporada}`;
   $('presentacion').textContent = E.presentacion;
-  $('bebida-aviso').textContent = E.bebida || '';
   if (E.fecha) { $('fecha').textContent = E.fecha; $('fecha').classList.remove('hidden'); }
 
   $('previa-hora').textContent = E.previa.hora;
@@ -180,6 +179,7 @@
     $('gracias-texto').textContent = viene
       ? 'Tu respuesta quedó guardada. Si cambiás de plan, podés modificarla cuando quieras.'
       : 'Gracias por avisar. Si al final podés, cambiá tu respuesta acá mismo.';
+    $('bebida-aviso').textContent = viene ? E.bebida || '' : '';
     const rows = [['Nombre', guest.name], ['Viene a', LABEL_ASIST[guest.asistencia]]];
     if (guest.bebida) rows.push(['Toma', LABEL_BEBIDA[guest.bebida]]);
     rows.push(['Mascota', guest.petName || 'Sin nombre']);
