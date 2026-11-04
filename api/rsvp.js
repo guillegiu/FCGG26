@@ -1,5 +1,6 @@
 // Guarda la respuesta: si viene a la previa, al boliche o a ambas, que toma y su mascota.
 import { getJSON, putJSON, putFile } from '../lib/store.js';
+import { limpiarDiseno } from '../lib/mascota.js';
 import { send, readJson, cleanText, validId, publicGuest, geoFromReq, nombreBloqueado, ASISTENCIA, BEBIDAS } from '../lib/http.js';
 
 const MAX_PHOTO_BYTES = 2_500_000;
@@ -31,6 +32,8 @@ export default async function handler(req, res) {
       const petName = cleanText(body.petName, 40);
       const pet = guest.pet || {};
       if (petName) pet.name = petName;
+      const design = limpiarDiseno(body.petDesign);
+      if (design) pet.design = design;
       if (body.petPhoto) {
         const match = /^data:image\/(jpeg|png|webp);base64,(.+)$/.exec(String(body.petPhoto));
         if (!match) return send(res, 400, { error: 'la foto tiene que ser una imagen' });
@@ -41,7 +44,7 @@ export default async function handler(req, res) {
         await putFile(photoPath, buffer, `image/${match[1]}`);
         pet.photo = photoPath;
       }
-      if (pet.name || pet.photo) {
+      if (pet.name || pet.photo || pet.design) {
         pet.updatedAt = new Date().toISOString();
         guest.pet = pet;
       }

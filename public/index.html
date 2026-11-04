@@ -119,18 +119,10 @@
 
         <div class="card surprise">
           <h3>Habrá sorpresas</h3>
-          <p class="muted small">Subí una foto de tu mascota y decime cómo se llama. No preguntes por qué.</p>
+          <p class="muted small">Diseñá tu mascota y ponele nombre. No preguntes por qué.</p>
+          <div class="pet-editor" id="pet-editor"></div>
           <label class="field" for="pet-name">Nombre de tu mascota</label>
           <input type="text" id="pet-name" maxlength="40" placeholder="Ej: Firulais">
-          <label class="pet-pick" for="pet-photo">
-            <span class="pet-thumb" id="pet-thumb">+</span>
-            <span>
-              <b id="pet-photo-label">Elegir foto</b><br>
-              <span class="muted small">Desde la galería o sacala en el momento</span>
-            </span>
-            <input type="file" id="pet-photo" accept="image/*">
-          </label>
-          <label class="check"><input type="checkbox" id="no-pet">No tengo mascota</label>
         </div>
         </div>
 
@@ -154,6 +146,7 @@
   </main>
 
   <script src="/config.js"></script>
+  <script src="/mascota.js"></script>
   <script src="/app.js"></script>
 </body>
 </html>

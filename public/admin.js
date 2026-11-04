@@ -155,9 +155,13 @@
       if (!pets.length) return box.append(el('div', { class: 'card empty' }, 'Todavía nadie subió su mascota.'));
       const grid = el('div', { class: 'gallery' });
       for (const g of pets) {
-        const media = g.pet.photo
-          ? el('img', { src: photoUrl(g), alt: g.pet.name || 'Mascota', loading: 'lazy', onclick: () => zoom(photoUrl(g)) })
-          : el('div', { class: 'noimg' }, 'Sin foto');
+        let media;
+        if (g.pet.design) {
+          media = el('div', { class: 'noimg' });
+          media.innerHTML = Mascota.svg(g.pet.design, 140);
+        } else if (g.pet.photo) {
+          media = el('img', { src: photoUrl(g), alt: g.pet.name || 'Mascota', loading: 'lazy', onclick: () => zoom(photoUrl(g)) });
+        } else media = el('div', { class: 'noimg' }, 'Sin diseño');
         grid.append(el('div', { class: 'pet' }, media, el('div', { class: 't' }, el('b', {}, g.pet.name || 'Sin nombre'), el('span', {}, 'de ' + g.name))));
       }
       return box.append(grid);
@@ -173,7 +177,11 @@
       if (g.noPet) pet = 'No tiene';
       else if (g.pet) {
         pet = el('span', {});
-        if (g.pet.photo) pet.append(el('img', { class: 'thumb', src: photoUrl(g), alt: '', loading: 'lazy', onclick: () => zoom(photoUrl(g)) }));
+        if (g.pet.design) {
+          const m = el('span', { class: 'thumb', style: 'display:inline-block;border:0' });
+          m.innerHTML = Mascota.svg(g.pet.design, 40);
+          pet.append(m);
+        } else if (g.pet.photo) pet.append(el('img', { class: 'thumb', src: photoUrl(g), alt: '', loading: 'lazy', onclick: () => zoom(photoUrl(g)) }));
         pet.append(g.pet.name || 'Sin nombre');
       }
       tbody.append(

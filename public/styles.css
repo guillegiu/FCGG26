@@ -290,6 +290,29 @@ input[type='text']:focus, input[type='password']:focus {
 .chip:has(input:focus-visible) { box-shadow: 0 0 0 3px rgba(225, 34, 43, 0.35); }
 .chip.wide { grid-column: 1 / -1; }
 
+.pet-editor { display: grid; gap: 14px; margin: 12px 0 4px; }
+@media (min-width: 640px) { .pet-editor { grid-template-columns: 190px 1fr; align-items: start; } }
+.ed-preview {
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  padding: 18px 10px 12px; border-radius: 14px;
+  background: radial-gradient(circle at 50% 40%, #2a2a33, #101014);
+  border: 1px solid var(--line);
+}
+.ed-azar, .ed-chip {
+  font: inherit; font-size: 13px; color: #ddd; cursor: pointer;
+  background: #18181d; border: 1px solid #3a3a43; border-radius: 999px; padding: 6px 12px;
+}
+.ed-chip.on { border-color: var(--red); background: rgba(225, 34, 43, 0.16); color: #fff; }
+.ed-ops { display: grid; gap: 10px; }
+.ed-titulo { font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin-bottom: 6px; }
+.ed-opciones { display: flex; flex-wrap: wrap; gap: 6px; }
+.ed-color {
+  width: 30px; height: 30px; border-radius: 50%; cursor: pointer;
+  border: 2px solid #3a3a43; padding: 0;
+}
+.ed-color.on { border-color: #fff; box-shadow: 0 0 0 2px var(--red); }
+.pet-mini svg { display: block; }
+
 .pet-pick {
   display: flex;
   align-items: center;

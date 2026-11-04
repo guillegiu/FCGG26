@@ -19,7 +19,7 @@
   let guestId = local.get('cumple.id') || newId();
   local.set('cumple.id', guestId);
   let guest = null;
-  let petPhotoData = null;
+  let petDesign = null;
 
   // ---------- textos ----------
   $('temporada').textContent = E.temporada;
@@ -117,16 +117,10 @@
     $('q-bebida').classList.toggle('hidden', a === 'no');
   }
 
-  function updatePet() {
-    const off = $('no-pet').checked;
-    $('pet-name').disabled = off;
-    document.querySelector('.pet-pick').style.opacity = off ? 0.4 : 1;
-    document.querySelector('.pet-pick').style.pointerEvents = off ? 'none' : '';
-  }
+  const petEditor = Mascota.editor($('pet-editor'), null, (g) => { petDesign = g; });
 
   form.addEventListener('change', (e) => {
     if (e.target.name === 'asistencia') updateBebida();
-    if (e.target.id === 'no-pet') updatePet();
   });
 
   function fillForm() {
@@ -134,65 +128,20 @@
     if (guest.asistencia) form.asistencia.value = guest.asistencia;
     if (guest.bebida) form.bebida.value = guest.bebida;
     if (guest.petName && !$('pet-name').value) $('pet-name').value = guest.petName;
-    $('no-pet').checked = guest.noPet;
-    if (guest.hasPetPhoto && !petPhotoData) $('pet-photo-label').textContent = 'Ya subiste una foto (tocá para cambiarla)';
+    if (guest.petDesign) petEditor.set(guest.petDesign);
     updateBebida();
-    updatePet();
   }
-
-  // Achica la foto en el celular antes de subirla (max 1280 px, jpg).
-  function compress(file) {
-    return new Promise((resolve, reject) => {
-      const url = URL.createObjectURL(file);
-      const img = new Image();
-      img.onload = () => {
-        const max = 1280;
-        const scale = Math.min(1, max / Math.max(img.naturalWidth, img.naturalHeight));
-        const w = Math.round(img.naturalWidth * scale);
-        const h = Math.round(img.naturalHeight * scale);
-        const canvas = document.createElement('canvas');
-        canvas.width = w;
-        canvas.height = h;
-        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-        URL.revokeObjectURL(url);
-        resolve(canvas.toDataURL('image/jpeg', 0.82));
-      };
-      img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('No pude leer esa foto, probá con otra')); };
-      img.src = url;
-    });
-  }
-
-  $('pet-photo').addEventListener('change', async (e) => {
-    const file = e.target.files && e.target.files[0];
-    if (!file) return;
-    $('e-rsvp').textContent = '';
-    $('pet-photo-label').textContent = 'Procesando...';
-    try {
-      petPhotoData = await compress(file);
-      $('pet-thumb').style.backgroundImage = `url("${petPhotoData}")`;
-      $('pet-thumb').textContent = '';
-      $('pet-photo-label').textContent = 'Foto lista (tocá para cambiarla)';
-    } catch (err) {
-      petPhotoData = null;
-      $('pet-photo-label').textContent = 'Elegir foto';
-      $('e-rsvp').textContent = err.message;
-    }
-  });
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const asistencia = form.asistencia.value;
     const bebida = form.bebida.value;
-    const noPet = $('no-pet').checked;
     const petName = $('pet-name').value.trim();
     const err = $('e-rsvp');
     err.textContent = '';
     if (!asistencia) { err.textContent = 'Contame a qué venís'; return; }
     if (asistencia !== 'no' && !bebida) { err.textContent = 'Elegí qué vas a tomar'; return; }
-    if (!noPet && !petName && !petPhotoData && !guest.petName) {
-      err.textContent = 'Poné el nombre de tu mascota o marcá que no tenés';
-      return;
-    }
+    if (!petName) { err.textContent = 'Ponele nombre a tu mascota'; return; }
     $('b-rsvp').disabled = true;
     $('b-rsvp').textContent = 'Enviando...';
     try {
@@ -200,11 +149,9 @@
         id: guestId,
         asistencia,
         bebida: asistencia === 'no' ? null : bebida,
-        noPet,
-        petName: noPet ? '' : petName,
-        petPhoto: noPet ? null : petPhotoData,
+        petName,
+        petDesign,
       });
-      petPhotoData = null;
       setGuest(g);
       renderGracias();
       show('s-gracias');
@@ -225,7 +172,7 @@
       : 'Gracias por avisar. Si al final podés, cambiá tu respuesta acá mismo.';
     const rows = [['Nombre', guest.name], ['Viene a', LABEL_ASIST[guest.asistencia]]];
     if (guest.bebida) rows.push(['Toma', LABEL_BEBIDA[guest.bebida]]);
-    rows.push(['Mascota', guest.noPet ? 'No tiene' : (guest.petName || 'Sin nombre') + (guest.hasPetPhoto ? ' (con foto)' : '')]);
+    rows.push(['Mascota', guest.petName || 'Sin nombre']);
     const ul = $('resumen');
     ul.textContent = '';
     for (const [k, v] of rows) {
@@ -235,6 +182,13 @@
       a.textContent = k;
       b.textContent = v;
       li.append(a, b);
+      ul.append(li);
+    }
+    if (guest.petDesign) {
+      const li = document.createElement('li');
+      li.className = 'pet-mini';
+      li.style.justifyContent = 'center';
+      li.innerHTML = Mascota.svg(guest.petDesign, 110);
       ul.append(li);
     }
   }
