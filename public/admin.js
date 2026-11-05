@@ -10,6 +10,7 @@
   let key = store.get();
   let guests = [];
   let tab = 'todos';
+  let toma = '';
 
   const fmt = (iso) => {
     if (!iso) return '-';
@@ -98,6 +99,14 @@
     renderList();
   });
 
+  $('toma').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-toma]');
+    if (!b) return;
+    toma = b.dataset.toma;
+    for (const x of $('toma').querySelectorAll('button')) x.classList.toggle('on', x === b);
+    renderList();
+  });
+
   function render() {
     const responded = guests.filter((g) => g.respondedAt);
     const count = (a) => responded.filter((g) => g.asistencia === a).length;
@@ -148,6 +157,11 @@
     let rows = guests;
     if (tab === 'respondieron') rows = guests.filter((g) => g.respondedAt);
     if (tab === 'pendientes') rows = guests.filter((g) => !g.respondedAt);
+    // Filtro y orden por lo que toma.
+    if (toma === 'orden') {
+      const pos = (g) => (g.bebida ? BEBIDAS.indexOf(g.bebida) : BEBIDAS.length);
+      rows = [...rows].sort((a, b) => pos(a) - pos(b) || a.name.localeCompare(b.name));
+    } else if (toma) rows = rows.filter((g) => g.bebida === toma);
 
     if (tab === 'mapa') {
       const pts = guests.filter((g) => g.geo && g.geo.lat != null && g.geo.lng != null);
