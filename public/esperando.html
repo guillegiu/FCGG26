@@ -92,7 +92,7 @@
 
     /* Escenario chico con el conejo cantante, al fondo y al centro. */
     .escenario {
-      position: absolute; left: 50%; bottom: 34px; transform: translateX(-50%); z-index: 1;
+      position: absolute; left: 50%; bottom: 28px; transform: translateX(-50%); z-index: 1;
       display: flex; flex-direction: column; align-items: center; pointer-events: none;
     }
     .conejo {
@@ -104,13 +104,13 @@
     @keyframes canta { 0%, 100% { transform: rotate(-4deg); } 50% { transform: rotate(4deg) translateY(-3%); } }
     @keyframes boca { 0%, 100% { transform: scaleY(0.4); } 50% { transform: scaleY(1.2); } }
     @keyframes orejas { 0%, 100% { transform: rotate(-5deg); } 50% { transform: rotate(5deg); } }
-    .escenario-base {
-      width: clamp(120px, 20vw, 230px); height: clamp(90px, 16vh, 150px); border-radius: 6px 6px 2px 2px;
-      background: linear-gradient(180deg, #e1222b 0 14px, #8f1218 14px),
-        repeating-linear-gradient(0deg, transparent 0 18px, rgba(0, 0, 0, 0.25) 18px 20px);
-      background-blend-mode: multiply;
-      box-shadow: 0 6px 0 #4d0a0d, 0 0 40px rgba(225, 34, 43, 0.45);
+    .casita {
+      display: block; width: clamp(170px, 26vw, 300px); height: auto; margin-top: -18px;
+      filter: drop-shadow(0 0 30px rgba(244, 163, 184, 0.35)) drop-shadow(0 10px 18px rgba(0, 0, 0, 0.5));
     }
+    .foquitos circle { animation: foquito 1.2s ease-in-out infinite; }
+    .foquitos circle:nth-child(even) { animation-delay: -0.6s; }
+    @keyframes foquito { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
     .escenario::before {
       content: ''; position: absolute; left: 50%; top: -30%; width: 160%; height: 150%; transform: translateX(-50%);
       background: radial-gradient(ellipse at 50% 70%, rgba(255, 240, 200, 0.22), transparent 60%); z-index: -1;
@@ -207,7 +207,53 @@
           <path d="M66 87 h10 M67 90 h8" stroke="#555" stroke-width="1"/>
         </g>
       </svg>
-      <div class="escenario-base"></div>
+      <!-- La casita: casa de barrio rosada con rejas blancas; el conejo canta en el techo. -->
+      <svg class="casita" viewBox="0 0 220 150" aria-hidden="true">
+        <!-- baranda del techo -->
+        <rect x="14" y="6" width="192" height="4" fill="#fff"/>
+        <g fill="#fff">
+          <rect x="16" y="6" width="3" height="16"/><rect x="40" y="6" width="3" height="16"/><rect x="64" y="6" width="3" height="16"/>
+          <rect x="88" y="6" width="3" height="16"/><rect x="129" y="6" width="3" height="16"/><rect x="153" y="6" width="3" height="16"/>
+          <rect x="177" y="6" width="3" height="16"/><rect x="201" y="6" width="3" height="16"/>
+        </g>
+        <!-- losa -->
+        <rect x="6" y="20" width="208" height="10" rx="2" fill="#f7e6ea" stroke="#2b2233" stroke-width="2"/>
+        <!-- paredes -->
+        <rect x="12" y="30" width="196" height="116" fill="#f4a3b8" stroke="#2b2233" stroke-width="2.5"/>
+        <rect x="12" y="132" width="196" height="14" fill="#e58aa1"/>
+        <!-- guirnalda de luces -->
+        <path d="M12 34 Q61 52 110 34 Q159 52 208 34" fill="none" stroke="#2b2233" stroke-width="1.2"/>
+        <g class="foquitos">
+          <circle cx="30" cy="40" r="3.2" fill="#ffd34d"/><circle cx="52" cy="44.5" r="3.2" fill="#ff5c8a"/>
+          <circle cx="74" cy="44.5" r="3.2" fill="#7fd3ff"/><circle cx="94" cy="40" r="3.2" fill="#9cff8a"/>
+          <circle cx="126" cy="40" r="3.2" fill="#ffd34d"/><circle cx="146" cy="44.5" r="3.2" fill="#ff5c8a"/>
+          <circle cx="168" cy="44.5" r="3.2" fill="#7fd3ff"/><circle cx="190" cy="40" r="3.2" fill="#9cff8a"/>
+        </g>
+        <!-- ventanas con rejas -->
+        <g>
+          <rect x="24" y="62" width="50" height="40" fill="#ffe7a8" stroke="#2b2233" stroke-width="2"/>
+          <rect x="146" y="62" width="50" height="40" fill="#ffe7a8" stroke="#2b2233" stroke-width="2"/>
+          <g stroke="#fff" stroke-width="2.5" fill="none">
+            <path d="M24 72 H74 M24 82 H74 M24 92 H74 M36.5 62 V102 M49 62 V102 M61.5 62 V102"/>
+            <path d="M146 72 H196 M146 82 H196 M146 92 H196 M158.5 62 V102 M171 62 V102 M183.5 62 V102"/>
+            <path d="M26 64 Q36 70 49 64 Q62 70 72 64"/>
+            <path d="M148 64 Q158 70 171 64 Q184 70 194 64"/>
+          </g>
+        </g>
+        <!-- puerta con reja -->
+        <rect x="92" y="70" width="36" height="76" fill="#7a4e2d" stroke="#2b2233" stroke-width="2"/>
+        <g stroke="#fff" stroke-width="2.5" fill="none">
+          <rect x="90" y="68" width="40" height="78"/>
+          <path d="M90 88 H130 M90 108 H130 M90 128 H130 M103 68 V146 M117 68 V146"/>
+        </g>
+        <circle cx="122" cy="110" r="2" fill="#ffd34d"/>
+        <!-- silla plastica -->
+        <g fill="#fff" stroke="#2b2233" stroke-width="1.5">
+          <rect x="190" y="118" width="20" height="5" rx="2"/>
+          <rect x="204" y="100" width="5" height="22" rx="2"/>
+          <rect x="191" y="123" width="3" height="23"/><rect x="206" y="123" width="3" height="23"/>
+        </g>
+      </svg>
     </div>
     <div class="bailarines" id="bailarines"></div>
     <div class="tarima"></div>
