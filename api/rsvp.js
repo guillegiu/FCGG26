@@ -1,6 +1,7 @@
 // Guarda la respuesta: si viene a la previa, al boliche o a ambas, que toma y su mascota.
 import { getJSON, putJSON, putFile } from '../lib/store.js';
 import { limpiarDiseno } from '../lib/mascota.js';
+import { actualizarIndice } from '../lib/pets-index.js';
 import { send, readJson, cleanText, validId, publicGuest, geoFromReq, nombreBloqueado, ASISTENCIA, BEBIDAS } from '../lib/http.js';
 
 const MAX_PHOTO_BYTES = 2_500_000;
@@ -55,6 +56,7 @@ export default async function handler(req, res) {
     guest.respondedAt = new Date().toISOString();
     guest.lastSeen = guest.respondedAt;
     await putJSON(path, guest);
+    try { await actualizarIndice(id, guest); } catch (err) { console.error('indice', err); }
     return send(res, 200, { guest: publicGuest(guest) });
   } catch (err) {
     console.error('rsvp', err);
