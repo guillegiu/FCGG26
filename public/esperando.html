@@ -84,6 +84,43 @@
       background: repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.08) 0 40px, transparent 40px 80px);
     }
     footer { height: 20px; }
+
+    /* Parlantes a los costados de la tarima; laten cuando suena la música. */
+    .parlante {
+      position: absolute; bottom: 28px; z-index: 1; width: clamp(54px, 9vw, 110px); aspect-ratio: 0.62;
+      background: linear-gradient(160deg, #2a2a31, #121216); border: 3px solid #050506; border-radius: 10px;
+      box-shadow: inset 0 0 0 3px #222228, 0 10px 24px rgba(0, 0, 0, 0.6);
+      display: flex; flex-direction: column; align-items: center; justify-content: space-evenly; padding: 8% 0;
+    }
+    .parlante.izq { left: 2%; }
+    .parlante.der { right: 2%; }
+    .cono {
+      display: block; width: 74%; aspect-ratio: 1; border-radius: 50%;
+      background: radial-gradient(circle, #555 0 14%, #111 16% 34%, #2b2b30 36% 62%, #0a0a0c 64%);
+      box-shadow: 0 0 0 3px #3a3a42;
+    }
+    .cono.chico { width: 40%; }
+    .sonando .cono { animation: latido 0.46s ease-in-out infinite; }
+    .sonando .cono.chico { animation-duration: 0.23s; }
+    .sonando .parlante { box-shadow: inset 0 0 0 3px #222228, 0 0 30px rgba(225, 34, 43, 0.45); }
+    @keyframes latido { 0%, 100% { transform: scale(1); } 30% { transform: scale(1.1); } }
+    .notas { position: absolute; inset: 0; pointer-events: none; z-index: 1; }
+    .nota {
+      position: absolute; bottom: 30%; font-size: clamp(18px, 3vw, 30px); color: #fff; opacity: 0;
+      text-shadow: 0 0 10px rgba(225, 34, 43, 0.9); animation: nota 2.6s ease-out forwards;
+    }
+    @keyframes nota {
+      0% { opacity: 0; transform: translate(0, 0) rotate(0); }
+      15% { opacity: 1; }
+      100% { opacity: 0; transform: translate(var(--dx), -160px) rotate(var(--rot)); }
+    }
+    .musica {
+      position: fixed; left: 50%; bottom: 70px; transform: translateX(-50%); z-index: 5;
+      font: inherit; font-weight: 700; color: #fff; background: #e1222b; border: 0; border-radius: 999px;
+      padding: 12px 22px; cursor: pointer; box-shadow: 0 6px 20px rgba(225, 34, 43, 0.5);
+    }
+    .tema { position: fixed; left: 12px; bottom: 6px; z-index: 5; color: #9a9aa5; font-size: 12px; }
+    .tema:not(:empty)::before { content: '\266B  '; }
   </style>
 </head>
 <body>
@@ -97,9 +134,15 @@
   </div>
   <div class="tarima-zona">
     <div class="luces"><span></span><span></span><span></span><span></span></div>
+    <div class="parlante izq"><i class="cono chico"></i><i class="cono"></i></div>
+    <div class="parlante der"><i class="cono chico"></i><i class="cono"></i></div>
+    <div class="notas" id="notas"></div>
     <div class="bailarines" id="bailarines"></div>
     <div class="tarima"></div>
   </div>
+  <button class="musica" id="musica" type="button">Tocá para poner música</button>
+  <div class="tema" id="tema"></div>
+  <div id="yt" style="position:fixed;width:1px;height:1px;left:-10px;bottom:0;opacity:0;pointer-events:none"></div>
   <footer></footer>
 
   <script src="/mascota.js"></script>
@@ -144,6 +187,74 @@
           timers.push(setTimeout(() => { d.classList.remove('camina'); pasear(d); }, dur * 1000));
         }, quieto));
       }
+
+      // ---------- música: los temas cargados en mixia, desde YouTube, en bucle y mezclados ----------
+      const TEMAS = [
+        'Pt0gH4H_NQw', 'w_LJ7_0YLBk', 'njWsIZK7PGA', 'acEOASYioGY', 'v9T_MGfzq7I', 'eopPKANmKyg',
+        'myDIeOjqQos', 'lqX1S9mFHbU', 'yaHf1FwMYA4', 'zAfrPjTvSNs', 'EVgd4gvY0hU', 'qBUKfQRbzuk',
+        'X2MGCIDOMZ4', 'kLUeP9E9f5k', 'br9Bz-x0LeQ', 'hitCWMxsMi4', 'QdQEljUMCEM', 'sGJM-BUAl4w',
+        'JY-D0D1pC_k', 'jCQ_6XbATPc', 'TmKh7lAwnBI', 'osTJc5e1Cyo',
+      ];
+      for (let i = TEMAS.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [TEMAS[i], TEMAS[j]] = [TEMAS[j], TEMAS[i]];
+      }
+      const zona = document.querySelector('.tarima-zona');
+      const btn = document.getElementById('musica');
+      let player = null;
+      let notasTimer = null;
+
+      function sonando(si) {
+        zona.classList.toggle('sonando', si);
+        btn.style.display = si ? 'none' : '';
+        clearInterval(notasTimer);
+        if (si) notasTimer = setInterval(soltarNota, 450);
+      }
+      function soltarNota() {
+        const n = document.createElement('span');
+        n.className = 'nota';
+        n.textContent = ['♪', '♫', '♬'][Math.floor(Math.random() * 3)];
+        const izq = Math.random() < 0.5;
+        n.style.left = (izq ? 4 + Math.random() * 8 : 88 + Math.random() * 8) + '%';
+        n.style.setProperty('--dx', (izq ? 1 : -1) * (20 + Math.random() * 60) + 'px');
+        n.style.setProperty('--rot', (Math.random() * 60 - 30) + 'deg');
+        document.getElementById('notas').append(n);
+        setTimeout(() => n.remove(), 2700);
+      }
+
+      window.onYouTubeIframeAPIReady = function () {
+        player = new YT.Player('yt', {
+          width: 200, height: 120,
+          playerVars: { playsinline: 1, controls: 0 },
+          events: {
+            onReady: () => { player.cuePlaylist(TEMAS); },
+            onStateChange: (e) => {
+              sonando(e.data === YT.PlayerState.PLAYING);
+              if (e.data === YT.PlayerState.PLAYING) {
+                const d = player.getVideoData();
+                document.getElementById('tema').textContent = d && d.title ? d.title : '';
+              }
+              if (e.data === YT.PlayerState.ENDED) player.playVideoAt(0);
+            },
+            // Si un tema no se puede embeber, pasa al siguiente.
+            onError: () => player.nextVideo(),
+          },
+        });
+      };
+      const s = document.createElement('script');
+      s.src = 'https://www.youtube.com/iframe_api';
+      document.head.append(s);
+
+      // El navegador no deja arrancar con sonido sin un toque: se habilita con el botón (o tocando la tarima).
+      function arrancar() {
+        if (!player || !player.playVideo) return;
+        player.setLoop(true);
+        player.unMute();
+        player.setVolume(100);
+        player.playVideo();
+      }
+      btn.addEventListener('click', arrancar);
+      zona.addEventListener('click', arrancar);
 
       let ultimo = '';
       async function cargar() {
