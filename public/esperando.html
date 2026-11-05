@@ -96,7 +96,7 @@
       display: flex; flex-direction: column; align-items: center; pointer-events: none;
     }
     .conejo {
-      width: clamp(80px, 12vw, 140px); height: auto; display: block; margin-bottom: -4px;
+      width: clamp(96px, 13vw, 150px); height: auto; display: block; margin-bottom: -4px;
       transform-origin: 50% 100%; animation: canta 0.92s ease-in-out infinite;
     }
     .conejo .boca { transform-origin: 60px 93px; animation: boca 0.46s ease-in-out infinite; }
@@ -105,8 +105,10 @@
     @keyframes boca { 0%, 100% { transform: scaleY(0.4); } 50% { transform: scaleY(1.2); } }
     @keyframes orejas { 0%, 100% { transform: rotate(-5deg); } 50% { transform: rotate(5deg); } }
     .escenario-base {
-      width: clamp(130px, 20vw, 230px); height: 22px; border-radius: 6px 6px 2px 2px;
-      background: linear-gradient(180deg, #e1222b 0 25%, #8f1218 25%);
+      width: clamp(120px, 20vw, 230px); height: clamp(90px, 16vh, 150px); border-radius: 6px 6px 2px 2px;
+      background: linear-gradient(180deg, #e1222b 0 14px, #8f1218 14px),
+        repeating-linear-gradient(0deg, transparent 0 18px, rgba(0, 0, 0, 0.25) 18px 20px);
+      background-blend-mode: multiply;
       box-shadow: 0 6px 0 #4d0a0d, 0 0 40px rgba(225, 34, 43, 0.45);
     }
     .escenario::before {
