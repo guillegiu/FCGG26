@@ -1,5 +1,5 @@
 // Panel de admin: lista de invitados (GET) y borrar uno (DELETE ?id=). Pide ADMIN_PASSWORD.
-import { getJSON, listPaths, removeFile } from '../lib/store.js';
+import { getJSON, getManyJSON, listPaths, removeFile } from '../lib/store.js';
 import { send, isAdmin, validId } from '../lib/http.js';
 
 export default async function handler(req, res) {
@@ -9,9 +9,9 @@ export default async function handler(req, res) {
   try {
     if (req.method === 'GET') {
       const paths = (await listPaths('guests/')).filter((p) => p.endsWith('.json'));
-      const guests = (await Promise.all(paths.map((p) => getJSON(p)))).filter(Boolean);
+      const { items: guests, fallidos } = await getManyJSON(paths);
       guests.sort((a, b) => String(b.lastSeen).localeCompare(String(a.lastSeen)));
-      return send(res, 200, { guests });
+      return send(res, 200, { guests, fallidos });
     }
 
     if (req.method === 'DELETE') {
