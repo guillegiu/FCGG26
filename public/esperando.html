@@ -90,6 +90,30 @@
     }
     footer { height: 20px; }
 
+    /* Escenario chico con el conejo cantante, al fondo y al centro. */
+    .escenario {
+      position: absolute; left: 50%; bottom: 34px; transform: translateX(-50%); z-index: 1;
+      display: flex; flex-direction: column; align-items: center; pointer-events: none;
+    }
+    .conejo {
+      width: clamp(80px, 12vw, 140px); height: auto; display: block; margin-bottom: -4px;
+      transform-origin: 50% 100%; animation: canta 0.92s ease-in-out infinite;
+    }
+    .conejo .boca { transform-origin: 60px 93px; animation: boca 0.46s ease-in-out infinite; }
+    .conejo .orejas { transform-origin: 60px 52px; animation: orejas 0.92s ease-in-out infinite; }
+    @keyframes canta { 0%, 100% { transform: rotate(-4deg); } 50% { transform: rotate(4deg) translateY(-3%); } }
+    @keyframes boca { 0%, 100% { transform: scaleY(0.4); } 50% { transform: scaleY(1.2); } }
+    @keyframes orejas { 0%, 100% { transform: rotate(-5deg); } 50% { transform: rotate(5deg); } }
+    .escenario-base {
+      width: clamp(130px, 20vw, 230px); height: 22px; border-radius: 6px 6px 2px 2px;
+      background: linear-gradient(180deg, #e1222b 0 25%, #8f1218 25%);
+      box-shadow: 0 6px 0 #4d0a0d, 0 0 40px rgba(225, 34, 43, 0.45);
+    }
+    .escenario::before {
+      content: ''; position: absolute; left: 50%; top: -30%; width: 160%; height: 150%; transform: translateX(-50%);
+      background: radial-gradient(ellipse at 50% 70%, rgba(255, 240, 200, 0.22), transparent 60%); z-index: -1;
+    }
+
     /* Parlantes a los costados de la tarima; laten cuando suena la música. */
     .parlante {
       position: absolute; bottom: 28px; z-index: 1; width: clamp(54px, 9vw, 110px); aspect-ratio: 0.62;
@@ -143,6 +167,46 @@
     <div class="parlante izq"><i class="cono chico"></i><i class="cono"></i></div>
     <div class="parlante der"><i class="cono chico"></i><i class="cono"></i></div>
     <div class="notas" id="notas"></div>
+    <div class="escenario">
+      <svg class="conejo" viewBox="0 0 120 150" aria-hidden="true">
+        <!-- orejas -->
+        <g class="orejas">
+          <path d="M44 52 C34 22 38 2 48 4 C58 6 58 30 54 52 Z" fill="#f4f1ea" stroke="#2b2233" stroke-width="2.5"/>
+          <path d="M47 46 C42 26 44 12 48 12 C53 14 53 30 51 46 Z" fill="#f3b3c2"/>
+          <path d="M66 52 C66 26 74 4 84 8 C94 12 84 34 76 54 Z" fill="#f4f1ea" stroke="#2b2233" stroke-width="2.5"/>
+          <path d="M70 48 C71 30 76 16 81 16 C86 18 80 34 74 48 Z" fill="#f3b3c2"/>
+        </g>
+        <!-- cuerpo -->
+        <ellipse cx="60" cy="118" rx="26" ry="24" fill="#f4f1ea" stroke="#2b2233" stroke-width="2.5"/>
+        <ellipse cx="60" cy="124" rx="13" ry="14" fill="#fff"/>
+        <ellipse cx="48" cy="141" rx="9" ry="5" fill="#f4f1ea" stroke="#2b2233" stroke-width="2"/>
+        <ellipse cx="72" cy="141" rx="9" ry="5" fill="#f4f1ea" stroke="#2b2233" stroke-width="2"/>
+        <!-- cabeza -->
+        <ellipse cx="60" cy="74" rx="30" ry="26" fill="#f4f1ea" stroke="#2b2233" stroke-width="2.5"/>
+        <!-- anteojos de sol -->
+        <g>
+          <path d="M33 66 L87 66" stroke="#111" stroke-width="3"/>
+          <path d="M34 66 h22 a2 2 0 0 1 2 2 c0 8 -5 13 -12 13 c-7 0 -12 -6 -12 -13 Z" fill="#111"/>
+          <path d="M62 66 h22 a2 2 0 0 1 2 2 c0 8 -5 13 -12 13 c-7 0 -12 -6 -12 -13 Z" fill="#111"/>
+          <path d="M39 69 l6 0" stroke="#7fd3ff" stroke-width="2" stroke-linecap="round" opacity="0.8"/>
+          <path d="M67 69 l6 0" stroke="#7fd3ff" stroke-width="2" stroke-linecap="round" opacity="0.8"/>
+        </g>
+        <!-- nariz, boca cantando, cachetes -->
+        <path d="M57 84 L63 84 L60 88 Z" fill="#e57d95"/>
+        <ellipse class="boca" cx="60" cy="93" rx="5" ry="4" fill="#c0465f" stroke="#2b2233" stroke-width="1.5"/>
+        <ellipse cx="40" cy="86" rx="5" ry="3" fill="#f08aa3" opacity="0.5"/>
+        <ellipse cx="80" cy="86" rx="5" ry="3" fill="#f08aa3" opacity="0.5"/>
+        <!-- brazo con microfono -->
+        <g class="mic">
+          <path d="M80 112 Q92 104 86 96" stroke="#2b2233" stroke-width="10" fill="none" stroke-linecap="round"/>
+          <path d="M80 112 Q92 104 86 96" stroke="#f4f1ea" stroke-width="6.5" fill="none" stroke-linecap="round"/>
+          <rect x="74" y="88" width="7" height="16" rx="3" transform="rotate(35 77 96)" fill="#333" stroke="#111" stroke-width="1.5"/>
+          <circle cx="71" cy="88" r="6.5" fill="#9aa3ad" stroke="#111" stroke-width="1.5"/>
+          <path d="M66 87 h10 M67 90 h8" stroke="#555" stroke-width="1"/>
+        </g>
+      </svg>
+      <div class="escenario-base"></div>
+    </div>
     <div class="bailarines" id="bailarines"></div>
     <div class="tarima"></div>
   </div>
