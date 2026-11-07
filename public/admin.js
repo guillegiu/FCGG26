@@ -11,6 +11,7 @@
   let guests = [];
   let tab = 'todos';
   let toma = '';
+  let va = '';
 
   const fmt = (iso) => {
     if (!iso) return '-';
@@ -99,6 +100,14 @@
     renderList();
   });
 
+  $('va').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-va]');
+    if (!b) return;
+    va = b.dataset.va;
+    for (const x of $('va').querySelectorAll('button')) x.classList.toggle('on', x === b);
+    renderList();
+  });
+
   $('toma').addEventListener('click', (e) => {
     const b = e.target.closest('[data-toma]');
     if (!b) return;
@@ -157,6 +166,10 @@
     let rows = guests;
     if (tab === 'respondieron') rows = guests.filter((g) => g.respondedAt);
     if (tab === 'pendientes') rows = guests.filter((g) => !g.respondedAt);
+    // Filtro por a que va ("previa+" incluye a los que van a las dos).
+    if (va === 'previa+') rows = rows.filter((g) => g.asistencia === 'previa' || g.asistencia === 'ambas');
+    else if (va === 'boliche+') rows = rows.filter((g) => g.asistencia === 'boliche' || g.asistencia === 'ambas');
+    else if (va) rows = rows.filter((g) => g.asistencia === va);
     // Filtro y orden por lo que toma.
     if (toma === 'orden') {
       const pos = (g) => (g.bebida ? BEBIDAS.indexOf(g.bebida) : BEBIDAS.length);
